@@ -28,14 +28,14 @@ export default function RegisterPage() {
   return (
     <>
       <div className="page-header">
-        <h1 className="page-title">Event Registration</h1>
-        <span className="page-subtitle">EVT-2026-WORKSHOP — AI & Full-Stack Workshop</span>
+        <h1 className="page-title">Registration Desk</h1>
+        <span className="page-subtitle">EVT-2026-WORKSHOP - AI & FULL-STACK WORKSHOP</span>
       </div>
 
       <div className="two-col" style={{ maxWidth: "900px" }}>
         {/* Registration Form */}
         <div style={{ border: "1px solid var(--border)", background: "var(--bg-card)", padding: "1.25rem" }}>
-          <div className="section-title" style={{ marginBottom: "0.875rem" }}>New Registration</div>
+          <div className="section-title" style={{ marginBottom: "0.875rem" }}>New Entry</div>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label className="form-label">Full Name</label>
@@ -51,74 +51,72 @@ export default function RegisterPage() {
             </div>
             <div className="form-group">
               <label className="form-label">Amount (₹)</label>
-              <input className="form-input font-mono" type="number" value={form.amount} onChange={e => update("amount", Number(e.target.value))} min={100} required />
+              <input className="form-input font-mono text-right" type="number" value={form.amount} onChange={e => update("amount", Number(e.target.value))} min={100} required />
             </div>
             <div className="form-group">
               <label className="form-label">Event ID</label>
               <input className="form-input font-mono" value={form.event_id} onChange={e => update("event_id", e.target.value)} required />
             </div>
-            {error && <div style={{ color: "var(--status-error)", fontSize: "0.75rem", marginBottom: "0.75rem" }}>⚠ {error}</div>}
+            {error && <div style={{ color: "var(--status-error)", fontSize: "0.75rem", marginBottom: "0.75rem", fontFamily: "var(--font-mono)" }}>{error}</div>}
             <button className="btn btn-primary w-full" type="submit" disabled={loading}>
-              {loading ? "Registering…" : "Register & Create Order →"}
+              {loading ? "POSTING ENTRY..." : "REGISTER + CREATE ORDER"}
             </button>
           </form>
         </div>
 
         {/* Result Panel */}
         <div style={{ border: "1px solid var(--border)", background: "var(--bg-card)", padding: "1.25rem" }}>
-          <div className="section-title" style={{ marginBottom: "0.875rem" }}>Registration Result</div>
+          <div className="section-title" style={{ marginBottom: "0.875rem" }}>Entry Output</div>
           {!result ? (
-            <div style={{ color: "var(--text-muted)", fontSize: "0.78rem", padding: "1.5rem 0" }}>
-              Submit the form to see registration output and duplicate detection result.
-            </div>
+            <div className="empty-state" style={{ borderTop: "1px solid var(--border-subtle)" }}>POST A REGISTRATION ENTRY TO REVIEW ORDER OUTPUT AND DUPLICATE DETECTION.</div>
           ) : (
             <>
               <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "0.375rem 0.875rem", fontSize: "0.78rem", marginBottom: "1rem" }}>
                 <span className="text-muted">Reg ID</span>
-                <span className="font-mono text-amber">{result.id}</span>
+                <span className="font-mono text-amber num-cell">{result.id}</span>
                 <span className="text-muted">Status</span>
                 <span className={`badge ${result.status === "flagged" ? "badge-error" : "badge-verified"}`}>{result.status}</span>
                 <span className="text-muted">Order ID</span>
-                <span className="font-mono" style={{ fontSize: "0.7rem", color: "var(--text-secondary)" }}>{result.razorpay_order_id}</span>
+                <span className="font-mono num-cell" style={{ fontSize: "0.7rem", color: "var(--text-secondary)" }}>{result.razorpay_order_id}</span>
                 <span className="text-muted">Amount</span>
-                <span className="amount" style={{ color: "var(--status-refund)" }}>₹{result.amount?.toLocaleString("en-IN")}</span>
+                <span className="amount num-cell" style={{ color: "var(--status-refund)" }}>₹{result.amount?.toLocaleString("en-IN")}</span>
                 <span className="text-muted">Name</span>
                 <span>{result.name}</span>
                 <span className="text-muted">Email</span>
                 <span style={{ fontSize: "0.7rem" }}>{result.email}</span>
                 <span className="text-muted">Phone</span>
-                <span className="font-mono" style={{ fontSize: "0.72rem" }}>{result.phone}</span>
+                <span className="font-mono num-cell" style={{ fontSize: "0.72rem" }}>{result.phone}</span>
               </div>
 
               {result.is_flagged ? (
-                <div style={{ background: "var(--amber-bg)", border: "1px solid var(--amber-dim)", borderLeft: "2px solid var(--amber)", padding: "0.75rem", marginTop: "0.5rem" }}>
-                  <div style={{ fontWeight: 700, color: "var(--amber)", fontSize: "0.78rem", marginBottom: "0.25rem" }}>
-                    ⚑ Duplicate Flag Raised
+                <div className="notice-panel" style={{ background: "var(--amber-bg)", borderColor: "var(--amber-dim)", marginTop: "0.5rem" }}>
+                  <div className="notice-title" style={{ color: "var(--amber)" }}>
+                    Duplicate Flag Raised
                   </div>
-                  <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)" }}>
+                  <div className="notice-copy">
                     Flag ID: <span className="font-mono">{result.flag_id}</span>
-                    <br />AI detected a potential duplicate registration. Go to the Flag Queue to trigger voice verification.
+                    <br />Potential duplicate detected. Move this entry to the flag queue for voice verification.
                   </div>
                   <div style={{ marginTop: "0.625rem" }}>
                     <a href="/flags" className="btn btn-call btn-sm" style={{ fontSize: "0.68rem" }}>
-                      → View Flag Queue
+                      OPEN FLAG QUEUE
                     </a>
                   </div>
                 </div>
               ) : (
-                <div style={{ background: "var(--bg-base)", border: "1px solid #064e3b", borderLeft: "2px solid var(--status-refund)", padding: "0.75rem", marginTop: "0.5rem" }}>
-                  <div style={{ fontWeight: 700, color: "var(--status-refund)", fontSize: "0.78rem" }}>
-                    ✓ Registered Successfully
+                <div className="notice-panel" style={{ borderLeftColor: "var(--status-refund)", marginTop: "0.5rem" }}>
+                  <div className="notice-title" style={{ color: "var(--status-refund)" }}>
+                    Entry Cleared
                   </div>
-                  <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginTop: "0.25rem" }}>
-                    No duplicate patterns detected. Registration is active.
+                  <div className="notice-copy">
+                    No duplicate pattern detected. Registration remains active in the ledger.
                   </div>
                 </div>
               )}
 
               {/* Mock Razorpay Checkout Note */}
               <div style={{ marginTop: "0.875rem", padding: "0.625rem 0.875rem", background: "var(--bg-base)", border: "1px solid var(--border-subtle)", fontSize: "0.72rem", color: "var(--text-muted)" }}>
-                <strong style={{ color: "var(--text-secondary)" }}>Razorpay Test Mode:</strong> In production, use the{" "}
+                <strong style={{ color: "var(--text-secondary)" }}>RAZORPAY SANDBOX:</strong> In production, use the{" "}
                 <span className="font-mono">razorpay_order_id</span> ({result.razorpay_order_id}) with the Razorpay checkout SDK to collect payment. In test mode, payment capture is mocked automatically.
               </div>
             </>

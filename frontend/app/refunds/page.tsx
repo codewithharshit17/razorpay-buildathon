@@ -54,7 +54,7 @@ export default function RefundsPage() {
   const p = POLICY_PRESETS[preset];
 
   const handleRefundRequest = async () => {
-    if (!selectedPaymentId) { setError("Select a payment ID first."); return; }
+    if (!selectedPaymentId) { setError("SELECT A PAYMENT ID BEFORE EVALUATION."); return; }
     setProcessing(true);
     setError("");
     setRefundResult(null);
@@ -92,20 +92,20 @@ export default function RefundsPage() {
   return (
     <>
       <div className="page-header">
-        <h1 className="page-title">Refund Reasoner</h1>
-        <span className="page-subtitle">AI policy enforcement — 4 fixed clauses</span>
+        <h1 className="page-title">Refund Desk</h1>
+        <span className="page-subtitle">4 POLICY CLAUSES LOCKED</span>
       </div>
 
       {/* Policy Reference Card */}
-      <div style={{ border: "1px solid var(--border)", background: "var(--bg-card)", padding: "1rem 1.25rem", marginBottom: "1.25rem" }}>
+        <div style={{ border: "1px solid var(--border)", background: "var(--bg-card)", padding: "1rem 1.25rem", marginBottom: "1.25rem" }}>
         <div className="section-title" style={{ marginBottom: "0.5rem" }}>Fixed Refund Policy</div>
         <table className="ledger-table">
           <thead><tr><th>Clause</th><th>Condition</th><th>Refund Amount</th></tr></thead>
           <tbody>
-            <tr><td className="font-mono text-muted" style={{ fontSize: "0.7rem" }}>§1</td><td>Cancellation &gt;72h before event</td><td className="amount" style={{ color: "var(--status-refund)" }}>100% (full refund)</td></tr>
-            <tr><td className="font-mono text-muted" style={{ fontSize: "0.7rem" }}>§2</td><td>Cancellation &lt;72h before event</td><td className="amount" style={{ color: "var(--status-open)" }}>50% (partial refund)</td></tr>
-            <tr><td className="font-mono text-muted" style={{ fontSize: "0.7rem" }}>§3</td><td>No-show on event day</td><td className="amount" style={{ color: "var(--status-error)" }}>0% (no refund)</td></tr>
-            <tr><td className="font-mono text-muted" style={{ fontSize: "0.7rem" }}>§4</td><td>Duplicate payment</td><td className="amount" style={{ color: "var(--status-refund)" }}>100% of extra payment</td></tr>
+            <tr><td className="font-mono text-muted num-cell" style={{ fontSize: "0.7rem" }}>§1</td><td>Cancellation &gt;72h before event</td><td className="amount num-cell" style={{ color: "var(--status-refund)" }}>100% (full refund)</td></tr>
+            <tr><td className="font-mono text-muted num-cell" style={{ fontSize: "0.7rem" }}>§2</td><td>Cancellation &lt;72h before event</td><td className="amount num-cell" style={{ color: "var(--status-open)" }}>50% (partial refund)</td></tr>
+            <tr><td className="font-mono text-muted num-cell" style={{ fontSize: "0.7rem" }}>§3</td><td>No-show on event day</td><td className="amount num-cell" style={{ color: "var(--status-error)" }}>0% (no refund)</td></tr>
+            <tr><td className="font-mono text-muted num-cell" style={{ fontSize: "0.7rem" }}>§4</td><td>Duplicate payment</td><td className="amount num-cell" style={{ color: "var(--status-refund)" }}>100% of extra payment</td></tr>
           </tbody>
         </table>
       </div>
@@ -113,12 +113,12 @@ export default function RefundsPage() {
       <div className="two-col">
         {/* Refund Request Form */}
         <div style={{ border: "1px solid var(--border)", background: "var(--bg-card)", padding: "1rem 1.25rem" }}>
-          <div className="section-title" style={{ marginBottom: "0.875rem" }}>Submit Refund Request</div>
+          <div className="section-title" style={{ marginBottom: "0.875rem" }}>Refund Request Entry</div>
 
           <div className="form-group">
-            <label className="form-label">Payment ID</label>
-            <select className="form-select" value={selectedPaymentId} onChange={e => setSelectedPaymentId(e.target.value)}>
-              <option value="">Select payment…</option>
+              <label className="form-label">Payment ID</label>
+              <select className="form-select" value={selectedPaymentId} onChange={e => setSelectedPaymentId(e.target.value)}>
+                <option value="">SELECT PAYMENT ID...</option>
               {paymentIds.map(id => <option key={id} value={id}>{id}</option>)}
               <option value="PAY-101001">PAY-101001 (Seed #1)</option>
               <option value="PAY-101002">PAY-101002 (Seed #2)</option>
@@ -149,21 +149,19 @@ export default function RefundsPage() {
             <textarea className="form-input" rows={2} style={{ resize: "none" }} value={customReason} onChange={e => setCustomReason(e.target.value)} />
           </div>
 
-          {error && <div style={{ color: "var(--status-error)", fontSize: "0.75rem", marginBottom: "0.75rem" }}>⚠ {error}</div>}
+          {error && <div style={{ color: "var(--status-error)", fontSize: "0.75rem", marginBottom: "0.75rem", fontFamily: "var(--font-mono)" }}>{error}</div>}
 
           <button className="btn btn-primary" onClick={handleRefundRequest} disabled={processing || !selectedPaymentId}>
-            {processing ? "Evaluating…" : "Evaluate Refund →"}
+            {processing ? "EVALUATING..." : "EVALUATE REFUND"}
           </button>
         </div>
 
         {/* AI Refund Reasoner Result */}
         <div style={{ border: "1px solid var(--border)", background: "var(--bg-card)", padding: "1rem 1.25rem" }}>
-          <div className="section-title" style={{ marginBottom: "0.875rem" }}>AI Refund Recommendation</div>
+          <div className="section-title" style={{ marginBottom: "0.875rem" }}>Refund Decision Output</div>
 
           {!refundResult ? (
-            <div style={{ color: "var(--text-muted)", fontSize: "0.78rem", padding: "1.5rem 0" }}>
-              Submit a refund request to see the AI Refund Reasoner output.
-            </div>
+            <div className="empty-state" style={{ borderTop: "1px solid var(--border-subtle)" }}>ENTER A PAYMENT ID AND CLAUSE INPUT TO OPEN THE REFUND DECISION LEDGER.</div>
           ) : (
             <>
               <div style={{ display: "grid", gap: "0.5rem", marginBottom: "1rem" }}>
@@ -175,7 +173,7 @@ export default function RefundsPage() {
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <span className="text-xs text-muted">Calculated Amount</span>
-                  <span className="amount" style={{ color: "var(--status-refund)", fontSize: "1.25rem" }}>
+                  <span className="amount num-cell" style={{ color: "var(--status-refund)", fontSize: "1.25rem" }}>
                     {formatCurrency(refundResult.calculated_amount)}
                   </span>
                 </div>
@@ -206,18 +204,18 @@ export default function RefundsPage() {
                 <div className="text-xs text-muted mb-2">Organizer Decision</div>
                 <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", marginBottom: "0.5rem" }}>
                   <select className="form-select" style={{ fontSize: "0.72rem" }} value={humanDecision} onChange={e => setHumanDecision(e.target.value)}>
-                    <option value="">Select decision…</option>
-                    <option value="approved">Approve — Proceed with AI recommendation</option>
-                    <option value="overridden">Override — Apply different amount</option>
-                    <option value="rejected">Reject — Do not refund</option>
+                    <option value="">SELECT DECISION...</option>
+                    <option value="approved">APPROVE - USE RECOMMENDATION</option>
+                    <option value="overridden">OVERRIDE - APPLY DIFFERENT AMOUNT</option>
+                    <option value="rejected">REJECT - NO REFUND</option>
                   </select>
                   <button className="btn btn-primary btn-sm" onClick={handleHumanDecision} disabled={!humanDecision || resolving}>
-                    {resolving ? "Logging…" : "Apply & Log"}
+                    {resolving ? "LOGGING..." : "APPLY + LOG"}
                   </button>
                 </div>
                 {resolveMsg && (
                   <div style={{ color: "var(--status-verified)", fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}>
-                    ✓ {resolveMsg}
+                    {resolveMsg}
                   </div>
                 )}
               </div>

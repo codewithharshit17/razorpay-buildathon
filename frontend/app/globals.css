@@ -57,9 +57,9 @@ h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; color: var(-
 h2 { font-size: 1rem;    font-weight: 600; letter-spacing: -0.01em; color: var(--text-primary); }
 h3 { font-size: 0.875rem;font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
 
-.amount       { font-family: var(--font-mono); font-weight: 600; letter-spacing: -0.02em; }
-.hash-id      { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.02em; }
-.audit-id     { font-family: var(--font-mono); font-size: 0.7rem;  color: var(--amber); opacity: 0.9; }
+.amount       { font-family: var(--font-mono); font-weight: 600; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.hash-id      { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
+.audit-id     { font-family: var(--font-mono); font-size: 0.7rem;  color: var(--amber); opacity: 0.9; font-variant-numeric: tabular-nums; }
 
 /* ─── Layout Shells ──────────────────────────────────────────────────────── */
 .app-layout {
@@ -101,6 +101,18 @@ h3 { font-size: 0.875rem;font-weight: 600; color: var(--text-secondary); text-tr
   display: flex;
   flex-direction: column;
   gap: 0.125rem;
+}
+
+.sidebar-wordmark {
+  padding: 0 1rem 0.875rem;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 
 .sidebar-link {
@@ -170,6 +182,7 @@ h3 { font-size: 0.875rem;font-weight: 600; color: var(--text-secondary); text-tr
   font-family: var(--font-mono);
   font-size: 0.78rem;
   color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
 }
 
 .metric-banner-sep {
@@ -213,13 +226,16 @@ h3 { font-size: 0.875rem;font-weight: 600; color: var(--text-secondary); text-tr
 .stat-value.green  { color: var(--status-refund); }
 .stat-value.amber  { color: var(--status-open); }
 .stat-value.red    { color: var(--status-error); }
-.stat-value.blue   { color: var(--status-call); }
+.stat-value.blue   { color: var(--text-primary); }
 
 .stat-sub {
   font-size: 0.7rem;
   color: var(--text-muted);
   margin-top: 0.25rem;
   font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ─── Section Headers ────────────────────────────────────────────────────── */
@@ -268,6 +284,7 @@ h3 { font-size: 0.875rem;font-weight: 600; color: var(--text-secondary); text-tr
   letter-spacing: 0.1em;
   color: var(--text-muted);
   white-space: nowrap;
+  font-family: var(--font-mono);
 }
 
 .ledger-table td {
@@ -310,9 +327,9 @@ h3 { font-size: 0.875rem;font-weight: 600; color: var(--text-secondary); text-tr
 .badge-resolved { background: #111827;             color: var(--text-muted);     border: 1px solid var(--border); }
 .badge-refund   { background: #071a12;             color: var(--status-refund);  border: 1px solid #064e3b; }
 .badge-error    { background: #1c0a09;             color: var(--status-error);   border: 1px solid #7f1d1d; }
-.badge-call     { background: #0c1624;             color: var(--status-call);    border: 1px solid #1e3a5f; }
+.badge-call     { background: #0c1624;             color: var(--amber);          border: 1px solid #3d2e12; }
 .badge-verified { background: #071a0e;             color: var(--status-verified);border: 1px solid #14532d; }
-.badge-ai       { background: #0f1020;             color: #818cf8;               border: 1px solid #1e2050; }
+.badge-ai       { background: #101521;             color: var(--text-secondary); border: 1px solid var(--border); }
 .badge-fallback { background: #111827;             color: var(--text-muted);     border: 1px solid var(--border); }
 
 /* ─── Actor Badges (Audit) ───────────────────────────────────────────────── */
@@ -331,8 +348,9 @@ h3 { font-size: 0.875rem;font-weight: 600; color: var(--text-secondary); text-tr
   padding: 0.375rem 0.75rem;
   font-size: 0.72rem;
   font-weight: 600;
-  font-family: var(--font-sans);
-  letter-spacing: 0.02em;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   border-radius: 2px;
   border: 1px solid transparent;
   cursor: pointer;
@@ -373,11 +391,11 @@ h3 { font-size: 0.875rem;font-weight: 600; color: var(--text-secondary); text-tr
 .btn-danger:hover:not(:disabled) { background: #2c1010; }
 
 .btn-call {
-  background: #0c1624;
-  color: var(--status-call);
-  border-color: #1e3a5f;
+  background: var(--bg-raised);
+  color: var(--text-primary);
+  border-color: var(--border);
 }
-.btn-call:hover:not(:disabled) { background: #122036; }
+.btn-call:hover:not(:disabled) { background: var(--bg-hover); border-color: var(--amber-dim); }
 
 .btn-simulate {
   background: var(--bg-raised);
@@ -479,7 +497,8 @@ h3 { font-size: 0.875rem;font-weight: 600; color: var(--text-secondary); text-tr
   color: var(--text-primary);
   padding: 0.5rem 0.75rem;
   font-size: 0.82rem;
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   border-radius: 2px;
   outline: none;
   transition: border-color 0.12s;
@@ -493,7 +512,8 @@ h3 { font-size: 0.875rem;font-weight: 600; color: var(--text-secondary); text-tr
   color: var(--text-primary);
   padding: 0.5rem 0.75rem;
   font-size: 0.82rem;
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   border-radius: 2px;
   outline: none;
   cursor: pointer;
@@ -547,8 +567,8 @@ h3 { font-size: 0.875rem;font-weight: 600; color: var(--text-secondary); text-tr
 
 .tab {
   padding: 0.5rem 0.875rem;
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: 0.7rem;
+  font-weight: 600;
   color: var(--text-muted);
   cursor: pointer;
   border-bottom: 2px solid transparent;
@@ -557,11 +577,14 @@ h3 { font-size: 0.875rem;font-weight: 600; color: var(--text-secondary); text-tr
   border-top: none;
   border-left: none;
   border-right: none;
-  transition: color 0.12s, border-color 0.12s;
+  transition: color 0.12s, border-color 0.12s, background 0.12s;
   white-space: nowrap;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.tab:hover { color: var(--text-primary); }
+.tab:hover { color: var(--text-primary); background: var(--bg-raised); }
 
 .tab.active {
   color: var(--amber);
@@ -630,16 +653,57 @@ h3 { font-size: 0.875rem;font-weight: 600; color: var(--text-secondary); text-tr
   font-size: 0.75rem;
   color: var(--text-muted);
   font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ─── Empty State ────────────────────────────────────────────────────────── */
 .empty-state {
-  padding: 2.5rem;
-  text-align: center;
+  padding: 1.25rem 1rem;
+  text-align: left;
   color: var(--text-muted);
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   border: 1px solid var(--border-subtle);
   border-top: none;
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.num-cell {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.num-cell .hash-id,
+.num-cell .audit-id,
+.num-cell .amount {
+  display: block;
+}
+
+.notice-panel {
+  background: var(--bg-base);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--amber);
+  padding: 0.75rem;
+}
+
+.notice-title {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.notice-copy {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
 }
 
 /* ─── Scrollbar ──────────────────────────────────────────────────────────── */

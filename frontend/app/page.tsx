@@ -103,24 +103,24 @@ export default function DashboardPage() {
       {/* Demo Metric Banner */}
       {dm && (
         <div className="metric-banner">
-          <span className="metric-banner-label">Demo Metric</span>
+          <span className="metric-banner-label">Demo Run</span>
           <span className="metric-banner-stat">
-            Caught <strong>{Math.min(dm.detected_duplicates, 8)}/8</strong> planted duplicates
+            CAUGHT <strong>{Math.min(dm.detected_duplicates, 8)}/8</strong> PLANTED DUPLICATES
           </span>
           <span className="metric-banner-sep">|</span>
           <span className="metric-banner-stat">
-            <strong>{dm.false_positives}</strong> false positives
+            <strong>{dm.false_positives}</strong> FALSE POSITIVES
           </span>
           <span className="metric-banner-sep">|</span>
           <span className="metric-banner-stat">
-            <strong>{dm.recall_percent}%</strong> recall · <strong>{dm.precision_percent}%</strong> precision
+            <strong>{dm.recall_percent}%</strong> RECALL · <strong>{dm.precision_percent}%</strong> PRECISION
           </span>
           <span className="metric-banner-sep">|</span>
           <span className="metric-banner-stat">
-            <strong>{dm.audit_coverage_percent}%</strong> audit coverage
+            <strong>{dm.audit_coverage_percent}%</strong> AUDIT COVERAGE
           </span>
           <span className="metric-banner-sep" style={{ marginLeft: "auto" }}>
-            <span className="hash-id">refreshed {lastRefresh.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })}</span>
+            <span className="hash-id">REFRESHED {lastRefresh.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })}</span>
           </span>
         </div>
       )}
@@ -131,25 +131,25 @@ export default function DashboardPage() {
           <div className="stat-card">
             <div className="stat-label">Total Collected</div>
             <div className="stat-value green amount">{formatCurrency(dashboard.total_collected)}</div>
-            <div className="stat-sub">{dashboard.total_registrations} registrations</div>
+            <div className="stat-sub">{dashboard.total_registrations} ENTRIES</div>
           </div>
           <div className="stat-card">
             <div className="stat-label">Total Refunded</div>
             <div className="stat-value amount" style={{ color: "var(--status-open)" }}>
               {formatCurrency(dashboard.total_refunded)}
             </div>
-            <div className="stat-sub">issued refunds</div>
+            <div className="stat-sub">DISBURSED LEDGER</div>
           </div>
           <div className="stat-card">
             <div className="stat-label">Open Flags</div>
             <div className="stat-value amber">{dashboard.open_flags_count}</div>
-            <div className="stat-sub">{dashboard.resolved_flags_count} resolved</div>
+            <div className="stat-sub">{dashboard.resolved_flags_count} CLOSED CASES</div>
           </div>
           <div className="stat-card">
             <div className="stat-label">Call Outcomes</div>
             <div className="stat-value blue">{dashboard.call_outcomes?.total_calls ?? 0}</div>
             <div className="stat-sub">
-              {dashboard.call_outcomes?.auto_resolved_refund_extra ?? 0} auto-refunded
+              {dashboard.call_outcomes?.auto_resolved_refund_extra ?? 0} AUTO-SETTLED
             </div>
           </div>
         </div>
@@ -159,14 +159,14 @@ export default function DashboardPage() {
         {/* Open Flag Queue */}
         <div>
           <div className="section-header">
-            <span className="section-title">Open Flag Queue</span>
+            <span className="section-title">Open Flag Ledger</span>
             <a href="/flags" style={{ fontSize: "0.7rem", color: "var(--amber)", textDecoration: "none" }}>All flags →</a>
           </div>
           <div className="ledger-table-wrap">
             {loading ? (
-              <div className="empty-state">Loading…</div>
+              <div className="empty-state">PULLING OPEN FLAG LEDGER...</div>
             ) : flags.length === 0 ? (
-              <div className="empty-state">No open flags — all clear.</div>
+              <div className="empty-state">OPEN FLAG LEDGER CLEAR. NO UNSETTLED DUPLICATE CASES.</div>
             ) : (
               <table className="ledger-table">
                 <thead>
@@ -181,13 +181,13 @@ export default function DashboardPage() {
                 <tbody>
                   {flags.slice(0, 8).map((flag) => (
                     <tr key={flag.id} className={getStatusClass(flag.status)}>
-                      <td>
+                      <td className="num-cell">
                         <div className="audit-id">{flag.id}</div>
                         <div className="hash-id" style={{ marginTop: "0.125rem" }}>{formatDate(flag.created_at)}</div>
                       </td>
                       <td>
                         <div style={{ fontSize: "0.78rem", fontWeight: 500 }}>{flag.registrant_name}</div>
-                        <div className="hash-id">{flag.registrant_phone}</div>
+                        <div className="hash-id" style={{ textAlign: "right" }}>{flag.registrant_phone}</div>
                       </td>
                       <td>
                         {flag.matched_fields.map((f: string) => (
@@ -206,14 +206,14 @@ export default function DashboardPage() {
                             onClick={() => setSelectedFlag(flag)}
                             style={{ fontSize: "0.65rem" }}
                           >
-                            📞 Call to Verify
+                            PLACE CALL
                           </button>
                           <button
                             className="btn btn-simulate btn-sm"
                             onClick={() => setSelectedFlag(flag)}
                             style={{ fontSize: "0.65rem" }}
                           >
-                            ◈ Simulate Call
+                            SIMULATE
                           </button>
                         </div>
                       </td>
@@ -233,12 +233,12 @@ export default function DashboardPage() {
           </div>
           <div className="ledger-table-wrap">
             {auditLogs.length === 0 ? (
-              <div className="empty-state">No audit entries yet.</div>
+              <div className="empty-state">AUDIT FEED EMPTY. NO ACTOR-ATTRIBUTED EVENTS LOGGED YET.</div>
             ) : (
               <div>
                 {auditLogs.slice(0, 12).map((log) => (
                   <div key={log.id} className="audit-entry">
-                    <div>
+                    <div className="num-cell">
                       <div className="audit-id">{log.id}</div>
                       <div className="audit-timestamp">{formatTime(log.created_at)}</div>
                     </div>

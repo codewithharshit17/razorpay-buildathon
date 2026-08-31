@@ -24,6 +24,10 @@ function formatDt(ts: string) {
     d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: false });
 }
 
+function formatTabLabel(status: string) {
+  return status === "all" ? "ALL" : status.replace(/_/g, " ");
+}
+
 export default function FlagsPage() {
   const [tab, setTab] = useState("all");
   const [flags, setFlags] = useState<any[]>([]);
@@ -50,22 +54,22 @@ export default function FlagsPage() {
 
       <div className="page-header">
         <h1 className="page-title">Flag Queue</h1>
-        <span className="page-subtitle">{flags.length} records</span>
+        <span className="page-subtitle">{flags.length} ENTRIES</span>
       </div>
 
       <div className="tabs">
         {STATUS_TABS.map((s) => (
           <button key={s} className={`tab ${tab === s ? "active" : ""}`} onClick={() => setTab(s)}>
-            {s === "all" ? "All" : s.replace(/_/g, " ")}
+            {formatTabLabel(s)}
           </button>
         ))}
       </div>
 
       <div className="ledger-table-wrap">
         {loading ? (
-          <div className="empty-state">Loading…</div>
+          <div className="empty-state">PULLING FLAG QUEUE...</div>
         ) : flags.length === 0 ? (
-          <div className="empty-state">No flags found for filter: <strong>{tab}</strong></div>
+          <div className="empty-state">NO FLAG ENTRIES MATCH FILTER {tab.toUpperCase()}.</div>
         ) : (
           <table className="ledger-table">
             <thead>
@@ -85,12 +89,12 @@ export default function FlagsPage() {
             <tbody>
               {flags.map((flag) => (
                 <tr key={flag.id}>
-                  <td>
+                  <td className="num-cell">
                     <div className="audit-id">{flag.id}</div>
                     <div className="hash-id">{flag.registration_id}</div>
                   </td>
                   <td style={{ fontWeight: 500 }}>{flag.registrant_name}</td>
-                  <td className="font-mono" style={{ fontSize: "0.72rem" }}>{flag.registrant_phone}</td>
+                  <td className="font-mono num-cell" style={{ fontSize: "0.72rem" }}>{flag.registrant_phone}</td>
                   <td className="font-mono" style={{ fontSize: "0.68rem", color: "var(--text-secondary)" }}>{flag.registrant_email}</td>
                   <td>
                     <span className={`badge ${flag.flag_type === "duplicate_payment" ? "badge-error" : "badge-open"}`}>
@@ -112,22 +116,22 @@ export default function FlagsPage() {
                       {flag.ai_explanation.substring(0, 90)}{flag.ai_explanation.length > 90 ? "…" : ""}
                     </div>
                   </td>
-                  <td className="hash-id" style={{ whiteSpace: "nowrap" }}>{formatDt(flag.created_at)}</td>
+                  <td className="hash-id num-cell" style={{ whiteSpace: "nowrap" }}>{formatDt(flag.created_at)}</td>
                   <td>
                     {(flag.status === "open" || flag.status === "call_unclear") && (
                       <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
                         <button className="btn btn-call btn-sm" onClick={() => setSelected(flag)} style={{ fontSize: "0.62rem" }}>
-                          📞 Call to Verify
+                          PLACE CALL
                         </button>
                         <button className="btn btn-simulate btn-sm" onClick={() => setSelected(flag)} style={{ fontSize: "0.62rem" }}>
-                          ◈ Simulate Call
+                          SIMULATE
                         </button>
                       </div>
                     )}
                     {flag.status === "resolving_via_call" && (
                       <div className="call-pulse">
                         <div className="pulse-dot" />
-                        <span style={{ fontSize: "0.65rem", color: "var(--status-call)" }}>calling…</span>
+                        <span style={{ fontSize: "0.65rem", color: "var(--amber)" }}>CALL ACTIVE</span>
                       </div>
                     )}
                   </td>

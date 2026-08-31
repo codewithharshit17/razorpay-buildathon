@@ -7,8 +7,8 @@ from app.routers import events, webhooks, flags, payments, dashboard
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="College Workshops Event Payments Trust Layer",
-    description="Razorpay AI Buildathon — Open Track Trust & Audit Layer for College Event Payments",
+    title="Event KhataBook",
+    description="An AI-powered trust and audit layer for student event payments.",
     version="1.0.0"
 )
 
@@ -31,7 +31,7 @@ app.include_router(dashboard.router)
 def root():
     return {
         "status": "online",
-        "app": "College Workshops Event Payments Trust Layer",
+        "app": "Event KhataBook",
         "version": "1.0.0",
         "endpoints": [
             "/events/{id}/register",

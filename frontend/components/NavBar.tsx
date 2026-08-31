@@ -3,11 +3,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { href: "/", label: "Dashboard", icon: "▤" },
-  { href: "/flags", label: "Flag Queue", icon: "⚑" },
-  { href: "/refunds", label: "Refunds", icon: "↩" },
-  { href: "/audit", label: "Audit Log", icon: "☰" },
-  { href: "/register", label: "Register", icon: "＋" },
+  { href: "/", label: "Dashboard" },
+  { href: "/flags", label: "Flag Queue" },
+  { href: "/refunds", label: "Refunds" },
+  { href: "/audit", label: "Audit Log" },
+  { href: "/register", label: "Register" },
 ];
 
 export default function NavBar() {
@@ -16,24 +16,23 @@ export default function NavBar() {
     <>
       {/* Top bar — spans full width */}
       <header className="topbar" style={{ gridColumn: "1 / -1" }}>
-        <span className="topbar-brand">TrustLayer</span>
-        <span className="topbar-sub">/ razorpay buildathon</span>
+        <span className="topbar-brand">Event KhataBook</span>
+        <span className="topbar-sub">trust and audit layer for student event payments</span>
         <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span className="hash-id">EVT-2026-WORKSHOP</span>
-          <span className="badge badge-open">Test Mode</span>
+          <span className="hash-id">SANDBOX LEDGER</span>
         </div>
       </header>
 
       {/* Sidebar */}
       <nav className="sidebar">
-        <div className="sidebar-section">Navigation</div>
-        {links.map(({ href, label, icon }) => (
+        <div className="sidebar-wordmark">Event KhataBook</div>
+        {links.map(({ href, label }) => (
           <Link
             key={href}
             href={href}
             className={`sidebar-link ${pathname === href ? "active" : ""}`}
           >
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", width: "16px" }}>{icon}</span>
             {label}
           </Link>
         ))}

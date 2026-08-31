@@ -87,9 +87,9 @@ export default function VerificationCallModal({ flag, onClose, onResolved }: Pro
 
   const outcomeLabel = (outcome: string) => {
     switch (outcome) {
-      case "auto_resolved_refund_extra": return "↩ Auto-refunded extra payment";
-      case "auto_resolved_kept": return "✓ Verified — registration kept";
-      case "escalated_to_organizer": return "⚑ Escalated to organizer";
+      case "auto_resolved_refund_extra": return "AUTO-REFUNDED EXTRA PAYMENT";
+      case "auto_resolved_kept": return "VERIFIED - REGISTRATION KEPT";
+      case "escalated_to_organizer": return "ESCALATED TO ORGANIZER";
       default: return outcome;
     }
   };
@@ -101,13 +101,13 @@ export default function VerificationCallModal({ flag, onClose, onResolved }: Pro
         <div className="modal-header">
           <div>
             <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--text-primary)" }}>
-              Voice Verification
+              Voice Verification Desk
             </div>
             <div className="hash-id" style={{ marginTop: "0.125rem" }}>
-              Flag {flag.id} — {flag.registrant_name}
+              FLAG {flag.id} - {flag.registrant_name}
             </div>
           </div>
-          <button onClick={onClose} className="btn btn-ghost btn-sm">✕</button>
+          <button onClick={onClose} className="btn btn-ghost btn-sm">CLOSE</button>
         </div>
 
         <div className="modal-body">
@@ -144,14 +144,14 @@ export default function VerificationCallModal({ flag, onClose, onResolved }: Pro
                   Places an actual outbound call to <span className="font-mono" style={{ color: "var(--text-primary)" }}>{flag.registrant_phone}</span> using Twilio Voice API. Requires TWILIO_* env vars.
                 </div>
                 <button className="btn btn-call" onClick={handleRealCall} disabled={loading}>
-                  📞 Call to Verify
+                  PLACE LIVE CALL
                 </button>
               </div>
 
               {/* Simulate Section */}
               <div style={{ border: "1px solid var(--border)", padding: "0.875rem" }}>
                 <div style={{ fontSize: "0.72rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "0.375rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                  ◈ Simulate Call <span className="badge badge-fallback" style={{ marginLeft: "0.375rem" }}>Demo Mode</span>
+                  Simulate Call <span className="badge badge-fallback" style={{ marginLeft: "0.375rem" }}>Sandbox</span>
                 </div>
                 <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "0.625rem", lineHeight: 1.4 }}>
                   Enter the participant's spoken response to test the Call Intent Parser agent.
@@ -176,7 +176,7 @@ export default function VerificationCallModal({ flag, onClose, onResolved }: Pro
                 />
                 <div style={{ marginTop: "0.5rem" }}>
                   <button className="btn btn-simulate" onClick={handleSimulateSubmit} disabled={loading || !transcript}>
-                    ◈ Simulate Call &amp; Parse Intent
+                    PARSE SANDBOX RESPONSE
                   </button>
                 </div>
               </div>
@@ -188,7 +188,7 @@ export default function VerificationCallModal({ flag, onClose, onResolved }: Pro
             <div style={{ border: "1px solid var(--border)", padding: "1.25rem" }}>
               <div className="call-pulse" style={{ marginBottom: "0.75rem" }}>
                 <div className="pulse-dot" />
-                <span style={{ fontSize: "0.78rem", fontWeight: 600, color: "var(--status-call)" }}>Call in Progress</span>
+                <span style={{ fontSize: "0.78rem", fontWeight: 600, color: "var(--amber)" }}>CALL IN PROGRESS</span>
               </div>
               <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "0.75rem" }}>
                 Twilio is calling <span className="font-mono" style={{ color: "var(--text-primary)" }}>{flag.registrant_phone}</span>. The participant will hear a scripted yes/no question and their spoken response will be sent to <span className="font-mono">/webhooks/twilio/gather</span>.
@@ -231,8 +231,8 @@ export default function VerificationCallModal({ flag, onClose, onResolved }: Pro
               </div>
               <div style={{ fontSize: "0.72rem", color: result.outcome === "escalated_to_organizer" ? "var(--status-open)" : "var(--status-verified)", fontWeight: 600 }}>
                 {result.outcome === "escalated_to_organizer"
-                  ? "⚑ Unclear intent — manual organizer decision required."
-                  : "✓ Flag auto-resolved based on participant response."}
+                  ? "UNCLEAR INTENT. MANUAL ORGANIZER DECISION REQUIRED."
+                  : "FLAG AUTO-RESOLVED FROM PARTICIPANT RESPONSE."}
               </div>
             </div>
           )}
@@ -243,25 +243,25 @@ export default function VerificationCallModal({ flag, onClose, onResolved }: Pro
               <div className="text-xs text-muted mb-2">Manual Organizer Override</div>
               <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
                 <select className="form-select" style={{ fontSize: "0.72rem" }} value={manualDecision} onChange={(e) => setManualDecision(e.target.value)}>
-                  <option value="">Select decision…</option>
-                  <option value="approve_refund_extra">Approve — Refund Extra Payment</option>
-                  <option value="approve_keep">Approve — Keep Both Registrations</option>
-                  <option value="reject">Reject — Remove Duplicate</option>
+                  <option value="">SELECT DECISION...</option>
+                  <option value="approve_refund_extra">APPROVE - REFUND EXTRA PAYMENT</option>
+                  <option value="approve_keep">APPROVE - KEEP BOTH REGISTRATIONS</option>
+                  <option value="reject">REJECT - REMOVE DUPLICATE</option>
                 </select>
                 <button className="btn btn-secondary btn-sm" onClick={handleManualResolve} disabled={!manualDecision || loading}>
-                  Apply
+                  APPLY
                 </button>
               </div>
             </div>
           )}
 
-          {error && <div style={{ marginTop: "0.75rem", color: "var(--status-error)", fontSize: "0.75rem" }}>⚠ {error}</div>}
+          {error && <div style={{ marginTop: "0.75rem", color: "var(--status-error)", fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}>{error}</div>}
         </div>
 
         <div className="modal-footer">
-          <button className="btn btn-secondary btn-sm" onClick={onClose}>Close</button>
+          <button className="btn btn-secondary btn-sm" onClick={onClose}>CLOSE</button>
           {phase === "result" && (
-            <button className="btn btn-primary btn-sm" onClick={() => { onResolved(); onClose(); }}>Done</button>
+            <button className="btn btn-primary btn-sm" onClick={() => { onResolved(); onClose(); }}>DONE</button>
           )}
         </div>
       </div>

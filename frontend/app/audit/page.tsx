@@ -41,8 +41,8 @@ function PayloadDrawer({ payload, onClose }: { payload: string; onClose: () => v
     <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="modal-box" style={{ width: "min(680px, 96vw)" }}>
         <div className="modal-header">
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.78rem", fontWeight: 600 }}>Payload JSON</span>
-          <button className="btn btn-ghost btn-sm" onClick={onClose}>✕</button>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.78rem", fontWeight: 600 }}>PAYLOAD JSON</span>
+          <button className="btn btn-ghost btn-sm" onClick={onClose}>CLOSE</button>
         </div>
         <div className="modal-body">
           <pre style={{
@@ -61,7 +61,7 @@ function PayloadDrawer({ payload, onClose }: { payload: string; onClose: () => v
           </pre>
         </div>
         <div className="modal-footer">
-          <button className="btn btn-secondary btn-sm" onClick={onClose}>Close</button>
+          <button className="btn btn-secondary btn-sm" onClick={onClose}>CLOSE</button>
         </div>
       </div>
     </div>
@@ -105,7 +105,7 @@ export default function AuditPage() {
 
       <div className="page-header">
         <h1 className="page-title">Audit Log</h1>
-        <span className="page-subtitle">{logs.length} entries</span>
+        <span className="page-subtitle">{logs.length} ENTRIES</span>
       </div>
 
       {/* Filters */}
@@ -118,7 +118,7 @@ export default function AuditPage() {
               onClick={() => setActor(a)}
               style={{ fontSize: "0.68rem", padding: "0.25rem 0.5rem" }}
             >
-              {a === "all" ? "All Actors" : a}
+              {a === "all" ? "ALL ACTORS" : a}
             </button>
           ))}
         </div>
@@ -128,18 +128,18 @@ export default function AuditPage() {
           value={limit}
           onChange={e => setLimit(Number(e.target.value))}
         >
-          <option value={50}>Last 50</option>
-          <option value={100}>Last 100</option>
-          <option value={200}>Last 200</option>
+          <option value={50}>LAST 50</option>
+          <option value={100}>LAST 100</option>
+          <option value={200}>LAST 200</option>
         </select>
       </div>
 
       {/* Audit Log Table */}
       <div className="ledger-table-wrap">
         {loading ? (
-          <div className="empty-state">Loading…</div>
+          <div className="empty-state">PULLING AUDIT LOG...</div>
         ) : logs.length === 0 ? (
-          <div className="empty-state">No audit entries for filter: <strong>{actor}</strong></div>
+          <div className="empty-state">NO AUDIT ENTRIES MATCH ACTOR FILTER {actor.toUpperCase()}.</div>
         ) : (
           <table className="ledger-table">
             <thead>
@@ -156,10 +156,10 @@ export default function AuditPage() {
             <tbody>
               {logs.map((log) => (
                 <tr key={log.id}>
-                  <td>
+                  <td className="num-cell">
                     <span className="audit-id">{log.id}</span>
                   </td>
-                  <td>
+                  <td className="num-cell">
                     <span className="font-mono" style={{ fontSize: "0.68rem", color: "var(--text-muted)", whiteSpace: "nowrap" }}>
                       {formatDt(log.created_at)}
                     </span>
@@ -174,7 +174,7 @@ export default function AuditPage() {
                       {log.action}
                     </span>
                   </td>
-                  <td>
+                  <td className="num-cell">
                     <span className="hash-id">{log.entity_id}</span>
                   </td>
                   <td style={{ maxWidth: "300px" }}>
@@ -188,7 +188,7 @@ export default function AuditPage() {
                       onClick={() => setExpandedPayload(log.payload)}
                       style={{ fontSize: "0.65rem" }}
                     >
-                      { "{ }" }
+                      VIEW JSON
                     </button>
                   </td>
                 </tr>

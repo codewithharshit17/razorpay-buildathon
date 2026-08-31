@@ -66,9 +66,9 @@ def generate_twiml_gather_prompt(flag_id: str, question: str) -> str:
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<Response>\n'
         f'  <Gather input="speech" action="{gather_action_url}" method="POST" speechTimeout="auto">\n'
-        f'    <Say>{question}</Say>\n'
+        f'    <Say voice="Polly.Kajal-Neural" language="en-IN">{question}</Say>\n'
         '  </Gather>\n'
-        '  <Say>We didn\'t catch a response. Please contact the event organizer. Goodbye.</Say>\n'
+        '  <Say voice="Polly.Kajal-Neural" language="en-IN">We didn\'t catch a response. Please contact the event organizer. Goodbye.</Say>\n'
         '</Response>'
     )
     return twiml
@@ -80,7 +80,7 @@ def generate_twiml_final_response(message: str) -> str:
     twiml = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<Response>\n'
-        f'  <Say>{message}</Say>\n'
+        f'  <Say voice="Polly.Kajal-Neural" language="en-IN">{message}</Say>\n'
         '  <Hangup/>\n'
         '</Response>'
     )

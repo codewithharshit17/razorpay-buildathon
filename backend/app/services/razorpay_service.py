@@ -1,5 +1,5 @@
 import uuid
-from typing import Dict, Any, Tuple
+from typing import Tuple
 from app.config import config
 
 def create_razorpay_order(amount: float, receipt: str) -> Tuple[str, float, str]:
@@ -49,3 +49,28 @@ def verify_razorpay_payment_signature(
     except Exception as e:
         print(f"[RazorpayService] Signature verification failed: {e}")
         return False
+
+def execute_razorpay_refund(razorpay_payment_id: str | None, amount_in_inr: float) -> tuple[str | None, str | None]:
+    """Refund a captured Razorpay test-mode payment without ever fabricating an ID."""
+    if not razorpay_payment_id:
+        return None, "missing stored Razorpay payment ID"
+    if not config.RAZORPAY_KEY_ID.startswith("rzp_test_"):
+        return None, "Razorpay test-mode credentials are not configured"
+    if not config.RAZORPAY_KEY_SECRET or config.RAZORPAY_KEY_SECRET == "mock_secret_key_123456":
+        return None, "Razorpay test-mode credentials are not configured"
+
+    amount_in_paise = int(round(amount_in_inr * 100))
+    if amount_in_paise <= 0:
+        return None, "refund amount must be greater than zero"
+
+    try:
+        import razorpay
+
+        client = razorpay.Client(auth=(config.RAZORPAY_KEY_ID, config.RAZORPAY_KEY_SECRET))
+        refund = client.payment.refund(razorpay_payment_id, {"amount": amount_in_paise})
+        refund_id = refund.get("id")
+        if not refund_id:
+            return None, "Razorpay did not return a refund ID"
+        return refund_id, None
+    except Exception as exc:
+        return None, f"Razorpay refund API request failed: {exc}"

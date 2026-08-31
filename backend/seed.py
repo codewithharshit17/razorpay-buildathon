@@ -215,6 +215,7 @@ def seed_refund_scenarios(db: Session, now: datetime.datetime):
             payment_id=p.id,
             ai_recommendation=rec,
             policy_clause=policy_clause,
+            calculated_amount=calc_amount,
             reason=explanation
         )
         db.add(rfd)

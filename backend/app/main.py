@@ -1,10 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.database import engine, Base
+from app.database import engine, Base, ensure_schema_columns
 from app.routers import events, webhooks, flags, payments, dashboard
 
 # Create tables
 Base.metadata.create_all(bind=engine)
+ensure_schema_columns()
 
 app = FastAPI(
     title="Event KhataBook",

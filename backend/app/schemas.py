@@ -29,6 +29,8 @@ class FlagResponse(BaseModel):
     id: str
     registration_id: str
     payment_id: Optional[str]
+    razorpay_order_id: Optional[str] = None
+    razorpay_payment_id: Optional[str] = None
     flag_type: str
     ai_explanation: str
     matched_fields: List[str]

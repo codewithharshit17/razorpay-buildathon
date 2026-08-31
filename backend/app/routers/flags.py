@@ -29,6 +29,8 @@ def list_flags(
             id=f.id,
             registration_id=f.registration_id,
             payment_id=f.payment_id,
+            razorpay_order_id=f.payment.razorpay_order_id if f.payment else None,
+            razorpay_payment_id=f.payment.razorpay_payment_id if f.payment else None,
             flag_type=f.flag_type,
             ai_explanation=f.ai_explanation,
             matched_fields=json.loads(f.matched_fields) if f.matched_fields else [],

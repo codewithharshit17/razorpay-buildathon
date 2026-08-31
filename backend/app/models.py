@@ -73,7 +73,9 @@ class RefundDecision(Base):
     payment_id = Column(String, ForeignKey("payments.id"), nullable=False)
     ai_recommendation = Column(String, nullable=False) # full_refund, partial_50_percent, no_refund, refund_extra_only
     policy_clause = Column(Text, nullable=False)
+    calculated_amount = Column(Float, nullable=False, default=0.0) # INR amount approved for execution
     human_decision = Column(String, nullable=True) # approved, overridden, rejected
+    razorpay_refund_id = Column(String, nullable=True, index=True)
     reason = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 

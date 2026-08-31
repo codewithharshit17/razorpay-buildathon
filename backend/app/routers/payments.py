@@ -6,6 +6,7 @@ from app.models import Payment, RefundDecision
 from app.schemas import RefundRequest, RefundResolveRequest
 from app.agents.refund_reasoner import evaluate_refund_request
 from app.services.audit_service import log_audit
+from app.services.razorpay_service import execute_razorpay_refund
 
 router = APIRouter(prefix="/payments", tags=["Payments & Refunds"])
 
@@ -33,6 +34,7 @@ def request_payment_refund(
         payment_id=payment.id,
         ai_recommendation=rec,
         policy_clause=policy_clause,
+        calculated_amount=calc_amount,
         reason=explanation
     )
     db.add(refund_decision)
@@ -58,6 +60,8 @@ def request_payment_refund(
     return {
         "refund_decision_id": rfd_id,
         "payment_id": payment.id,
+        "razorpay_order_id": payment.razorpay_order_id,
+        "razorpay_payment_id": payment.razorpay_payment_id,
         "ai_recommendation": rec,
         "policy_clause": policy_clause,
         "calculated_amount": calc_amount,
@@ -77,14 +81,44 @@ def resolve_refund_manually(
 
     rfd_decision = db.query(RefundDecision).filter(RefundDecision.payment_id == payment.id).order_by(RefundDecision.created_at.desc()).first()
     
-    if rfd_decision:
-        rfd_decision.human_decision = payload.decision
-        db.commit()
+    if not rfd_decision:
+        raise HTTPException(status_code=409, detail="Refund decision must be evaluated before it can be resolved")
 
-    if payload.decision == "approved" or payload.decision == "overridden":
-        payment.status = "refunded"
+    rfd_decision.human_decision = payload.decision
+
+    if payload.decision in {"approved", "overridden"}:
+        refund_amount = payload.override_amount if payload.decision == "overridden" and payload.override_amount is not None else rfd_decision.calculated_amount
+        refund_id, execution_error = execute_razorpay_refund(payment.razorpay_payment_id, refund_amount)
+
+        if execution_error:
+            payment.status = "pending_manual_refund"
+            db.commit()
+            message = f"refund not executed via Razorpay: {execution_error}"
+            log_audit(
+                db=db,
+                actor="organizer",
+                action="REFUND_NOT_EXECUTED_VIA_RAZORPAY",
+                entity_id=payment.id,
+                payload={
+                    "message": message,
+                    "human_decision": payload.decision,
+                    "refund_amount": refund_amount,
+                    "razorpay_payment_id": payment.razorpay_payment_id,
+                }
+            )
+            return {
+                "status": "pending_manual_refund",
+                "payment_id": payment.id,
+                "razorpay_order_id": payment.razorpay_order_id,
+                "razorpay_payment_id": payment.razorpay_payment_id,
+                "razorpay_refund_id": None,
+                "message": message,
+            }
+
+        rfd_decision.razorpay_refund_id = refund_id
+        payment.status = "refunded" if refund_amount >= payment.amount else "partially_refunded"
         if payment.registration:
-            payment.registration.status = "refunded"
+            payment.registration.status = "refunded" if payment.status == "refunded" else "partially_refunded"
     else:
         payment.status = "captured"
 
@@ -102,4 +136,11 @@ def resolve_refund_manually(
         }
     )
 
-    return {"status": "refund_resolved", "payment_id": payment.id, "human_decision": payload.decision}
+    return {
+        "status": "refund_resolved",
+        "payment_id": payment.id,
+        "human_decision": payload.decision,
+        "razorpay_order_id": payment.razorpay_order_id,
+        "razorpay_payment_id": payment.razorpay_payment_id,
+        "razorpay_refund_id": rfd_decision.razorpay_refund_id,
+    }

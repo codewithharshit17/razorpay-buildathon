@@ -11,20 +11,27 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 def ensure_schema_columns():
-    """Apply the small additive migration needed by existing local databases."""
+    """Apply the small additive migrations needed by existing local databases."""
     inspector = inspect(engine)
-    if "refund_decisions" not in inspector.get_table_names():
-        return
+    tables = set(inspector.get_table_names())
 
-    existing_columns = {column["name"] for column in inspector.get_columns("refund_decisions")}
-    additions = {
-        "calculated_amount": "FLOAT NOT NULL DEFAULT 0.0",
-        "razorpay_refund_id": "VARCHAR",
-    }
-    with engine.begin() as connection:
-        for name, definition in additions.items():
-            if name not in existing_columns:
-                connection.execute(text(f"ALTER TABLE refund_decisions ADD COLUMN {name} {definition}"))
+    if "payments" in tables:
+        payment_columns = {column["name"] for column in inspector.get_columns("payments")}
+        for name, definition in {"razorpay_signature": "VARCHAR"}.items():
+            if name not in payment_columns:
+                with engine.begin() as connection:
+                    connection.execute(text(f"ALTER TABLE payments ADD COLUMN {name} {definition}"))
+
+    if "refund_decisions" in tables:
+        refund_columns = {column["name"] for column in inspector.get_columns("refund_decisions")}
+        additions = {
+            "calculated_amount": "FLOAT NOT NULL DEFAULT 0.0",
+            "razorpay_refund_id": "VARCHAR",
+        }
+        with engine.begin() as connection:
+            for name, definition in additions.items():
+                if name not in refund_columns:
+                    connection.execute(text(f"ALTER TABLE refund_decisions ADD COLUMN {name} {definition}"))
 
 def get_db():
     db = SessionLocal()

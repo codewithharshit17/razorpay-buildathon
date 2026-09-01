@@ -6,9 +6,57 @@ from app.models import Payment, RefundDecision
 from app.schemas import RefundRequest, RefundResolveRequest
 from app.agents.refund_reasoner import evaluate_refund_request
 from app.services.audit_service import log_audit
-from app.services.razorpay_service import execute_razorpay_refund
+from app.services.razorpay_service import execute_razorpay_refund, verify_razorpay_payment_signature
 
 router = APIRouter(prefix="/payments", tags=["Payments & Refunds"])
+
+@router.post("/verify")
+def verify_payment(
+    payload: dict,
+    db: Session = Depends(get_db)
+):
+    razorpay_order_id = (payload or {}).get("razorpay_order_id")
+    razorpay_payment_id = (payload or {}).get("razorpay_payment_id")
+    razorpay_signature = (payload or {}).get("razorpay_signature")
+
+    if not razorpay_order_id or not razorpay_payment_id or not razorpay_signature:
+        raise HTTPException(status_code=400, detail="Missing Razorpay payment verification payload")
+
+    payment = db.query(Payment).filter(Payment.razorpay_order_id == razorpay_order_id).first()
+    if not payment:
+        raise HTTPException(status_code=404, detail="Payment record not found for order")
+
+    if not verify_razorpay_payment_signature(razorpay_order_id, razorpay_payment_id, razorpay_signature):
+        payment.status = "failed"
+        db.commit()
+        raise HTTPException(status_code=400, detail="Razorpay payment signature verification failed")
+
+    payment.razorpay_payment_id = razorpay_payment_id
+    payment.razorpay_signature = razorpay_signature
+    payment.status = "captured"
+    if payment.registration:
+        payment.registration.status = "registered"
+    db.commit()
+
+    log_audit(
+        db=db,
+        actor="razorpay_checkout",
+        action="PAYMENT_VERIFIED",
+        entity_id=payment.id,
+        payload={
+            "razorpay_order_id": razorpay_order_id,
+            "razorpay_payment_id": razorpay_payment_id,
+            "amount": payment.amount,
+        }
+    )
+
+    return {
+        "status": "captured",
+        "payment_id": payment.id,
+        "razorpay_order_id": payment.razorpay_order_id,
+        "razorpay_payment_id": payment.razorpay_payment_id,
+        "razorpay_signature": payment.razorpay_signature,
+    }
 
 @router.post("/{payment_id}/refund-request")
 def request_payment_refund(

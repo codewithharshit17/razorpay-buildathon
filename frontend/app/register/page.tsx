@@ -1,6 +1,28 @@
 "use client";
 import { useState } from "react";
-import { registerForEvent } from "@/lib/api";
+import { registerForEvent, verifyRazorpayPayment } from "@/lib/api";
+
+const RAZORPAY_KEY_ID = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_TVuD8tJdcpXhUk";
+
+function loadRazorpayScript() {
+  return new Promise<void>((resolve, reject) => {
+    if (typeof window === "undefined") {
+      reject(new Error("Window is unavailable"));
+      return;
+    }
+    if ((window as any).Razorpay) {
+      resolve();
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Failed to load Razorpay Checkout.js"));
+    document.body.appendChild(script);
+  });
+}
 
 export default function RegisterPage() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", event_id: "EVT-2026-WORKSHOP", amount: 500 });
@@ -18,6 +40,47 @@ export default function RegisterPage() {
     try {
       const data = await registerForEvent(form);
       setResult(data);
+
+      if (data.payment_actor === "razorpay_mock_gateway") {
+        setError("MOCKED — not a real payment. Set RAZORPAY_USE_MOCK=false and valid Razorpay test credentials to use a live checkout flow.");
+        return;
+      }
+
+      await loadRazorpayScript();
+      const razorpayOptions = {
+        key: RAZORPAY_KEY_ID,
+        amount: Math.round(Number(data.amount) * 100),
+        currency: "INR",
+        name: "Event KhataBook",
+        description: `Registration for ${data.name}`,
+        order_id: data.razorpay_order_id,
+        handler: async function (response: any) {
+          try {
+            const verification = await verifyRazorpayPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+            setResult({ ...data, payment_status: verification.status, razorpay_payment_id: verification.razorpay_payment_id, razorpay_signature: verification.razorpay_signature });
+          } catch (verifyError: any) {
+            setError(verifyError.message || "Payment verification failed");
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            setError("Razorpay checkout was closed before payment was completed.");
+          }
+        },
+        prefill: {
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+        },
+        theme: { color: "#1f8fff" },
+      };
+
+      const razorpay = new (window as any).Razorpay(razorpayOptions);
+      razorpay.open();
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -114,10 +177,8 @@ export default function RegisterPage() {
                 </div>
               )}
 
-              {/* Mock Razorpay Checkout Note */}
               <div style={{ marginTop: "0.875rem", padding: "0.625rem 0.875rem", background: "var(--bg-base)", border: "1px solid var(--border-subtle)", fontSize: "0.72rem", color: "var(--text-muted)" }}>
-                <strong style={{ color: "var(--text-secondary)" }}>RAZORPAY SANDBOX:</strong> In production, use the{" "}
-                <span className="font-mono">razorpay_order_id</span> ({result.razorpay_order_id}) with the Razorpay checkout SDK to collect payment. In test mode, payment capture is mocked automatically.
+                <strong style={{ color: "var(--text-secondary)" }}>Razorpay checkout:</strong> real payment is handled via the Razorpay Checkout.js modal using the order ID returned above. If the server is intentionally configured for a mock fallback, the UI will clearly label it as <span style={{ color: "var(--status-error)" }}>MOCKED — not a real payment</span>.
               </div>
             </>
           )}

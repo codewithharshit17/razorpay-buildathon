@@ -98,3 +98,20 @@ export async function registerForEvent(data: {
   }
   return res.json();
 }
+
+export async function verifyRazorpayPayment(data: {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}) {
+  const res = await fetch(`${API_BASE}/payments/verify`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.detail || "Failed to verify payment");
+  }
+  return res.json();
+}

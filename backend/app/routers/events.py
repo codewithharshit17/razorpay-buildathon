@@ -96,5 +96,6 @@ def register_for_event(event_id: str, payload: RegistrationCreate, db: Session =
         amount=amount,
         is_flagged=is_flag,
         flag_id=flag_id_res,
-        created_at=new_reg.created_at
+        created_at=new_reg.created_at,
+        payment_actor=pay_actor,
     )

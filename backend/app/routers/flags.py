@@ -186,4 +186,10 @@ def resolve_flag_manually(
         }
     )
 
-    return {"status": "resolved", "flag_id": flag.id, "new_status": flag.status}
+    return {
+        "status": "resolved",
+        "flag_id": flag.id,
+        "new_status": flag.status,
+        "razorpay_order_id": flag.payment.razorpay_order_id if flag.payment else None,
+        "razorpay_payment_id": flag.payment.razorpay_payment_id if flag.payment else None,
+    }

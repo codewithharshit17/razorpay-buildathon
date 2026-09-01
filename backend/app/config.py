@@ -8,8 +8,9 @@ class Config:
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./trust_layer.db")
     BASE_URL: str = os.getenv("BASE_URL", "http://localhost:8000")
 
-    RAZORPAY_KEY_ID: str = os.getenv("RAZORPAY_KEY_ID", "rzp_test_mock123456")
-    RAZORPAY_KEY_SECRET: str = os.getenv("RAZORPAY_KEY_SECRET", "mock_secret_key_123456")
+    RAZORPAY_KEY_ID: str = os.getenv("RAZORPAY_KEY_ID", "")
+    RAZORPAY_KEY_SECRET: str = os.getenv("RAZORPAY_KEY_SECRET", "")
+    RAZORPAY_USE_MOCK: bool = os.getenv("RAZORPAY_USE_MOCK", "false").strip().lower() in {"1", "true", "yes", "on"}
 
     TWILIO_ACCOUNT_SID: str = os.getenv("TWILIO_ACCOUNT_SID", "")
     TWILIO_AUTH_TOKEN: str = os.getenv("TWILIO_AUTH_TOKEN", "")

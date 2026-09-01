@@ -20,6 +20,7 @@ class RegistrationResponse(BaseModel):
     amount: float
     is_flagged: bool = False
     flag_id: Optional[str] = None
+    payment_actor: Optional[str] = None
     created_at: datetime.datetime
 
     class Config:

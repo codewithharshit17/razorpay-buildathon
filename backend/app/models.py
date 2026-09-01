@@ -25,6 +25,7 @@ class Payment(Base):
     registration_id = Column(String, ForeignKey("registrations.id"), nullable=False)
     razorpay_payment_id = Column(String, nullable=True, index=True)
     razorpay_order_id = Column(String, nullable=False, index=True)
+    razorpay_signature = Column(String, nullable=True)
     amount = Column(Float, nullable=False) # In INR
     status = Column(String, nullable=False, default="created")
     # Statuses: created, captured, failed, refunded, partially_refunded

@@ -2,33 +2,33 @@
 
 **An AI-powered trust and audit layer for student event payments.**
 
-Built for the Razorpay AI Buildathon (Open Track).
+![Event KhataBook](docs/banner.svg)
 
-**Khata** (Hindi/Urdu: खाता) — an account, a ledger. This is a ledger that verifies itself.
+
 
 ---
 
 ## The Problem
 
-Student technical societies run paid events constantly — workshops, fests, competitions — collecting payments through Razorpay checkout links or forms. In practice, this creates three recurring failures that anyone who has actually run event payments for a college society has lived through:
+Student technical societies run paid events constantly like workshops, fests, competitions and collecting payments through Razorpay checkout links or forms. In practice, this creates three recurring failures that anyone who has actually run event payments for a college society has lived through:
 
 - **Duplicate registrations and duplicate payments.** A participant pays twice after a slow UPI confirmation, or registers twice with slightly different name/email/phone combinations — inflating headcount and creating refund ambiguity.
 - **Ad-hoc refund decisions.** Cancellations and postponements get resolved manually, with no consistent policy and no record of *why* a refund was approved or denied.
 - **Zero real-time financial visibility.** The faculty member or treasurer who has to sign off on an event's finances gets a spreadsheet stitched together after the fact, with no live view and no audit trail.
 
-This isn't a hypothetical problem. It's the operational reality of running payment collection for a student body like CSI VESIT.
+This isn't a hypothetical problem. It's the operational reality of running payment collection for a student body.
 
 ---
 
 ## What It Does
 
-- **Detects likely duplicate registrations and payments** using fuzzy matching (name, email, phone, roll number) plus an AI agent that explains *why* something was flagged, with a confidence score — not just an exact-match `WHERE email =`.
+- **Detects likely duplicate registrations and payments** using fuzzy matching (name, email, phone, roll number) plus an AI agent that explains *why* something was flagged, with a confidence score, not just an exact-match `WHERE email =`.
 - **Places a real outbound voice call** (via Twilio) to the participant to verify a flagged case in their own words, instead of waiting on a human to click through a queue.
 - **Parses the spoken response with an AI agent** that classifies intent (confirms / denies / unclear) and auto-resolves the flag or escalates it to a human.
-- **Reasons about refunds against a fixed, non-negotiable policy** — the AI classifies which policy clause applies and explains its reasoning; it does not invent refund amounts.
+- **Reasons about refunds against a fixed, non-negotiable policy** : the AI classifies which policy clause applies and explains its reasoning; it does not invent refund amounts.
 - **Executes real refunds through Razorpay's test-mode Refunds API** and persists the actual refund ID — never a fabricated one.
 - **Logs every AI recommendation, call outcome, and human decision** to an immutable, actor-attributed audit trail.
-- **Shows a live reconciliation dashboard** — collected, refunded, open flags, and call outcomes — in a dense, ledger-style UI built to look like a financial audit tool, not a generic SaaS dashboard.
+- **Shows a live reconciliation dashboard** like collected, refunded, open flags, and call outcomes; in a dense, ledger-style UI built to look like a financial audit tool, not a generic SaaS dashboard.
 
 ---
 
@@ -134,7 +134,7 @@ Automated ground-truth test (`backend/tests/test_demo_metric.py`), run against a
 
 > Re-run `pytest tests/test_demo_metric.py -v` before your final submission to confirm these numbers still hold — they were last verified prior to wiring up the real Razorpay Checkout and refund flow, and should be re-checked against the current codebase.
 
-Every action in the system — AI recommendation, call outcome, human decision — is written to an audit log with an explicit actor field, so it's possible to verify from the log itself whether real AI reasoning ran or a fallback did, and whether a Razorpay refund was actually executed or blocked for a stated reason.
+Every action in the system has AI recommendation, call outcome, human decision and is written to an audit log with an explicit actor field, so it's possible to verify from the log itself whether real AI reasoning ran or a fallback did, and whether a Razorpay refund was actually executed or blocked for a stated reason.
 
 ---
 
@@ -167,7 +167,7 @@ python -m pytest tests/test_demo_metric.py -v
 | `TWILIO_ACCOUNT_SID` | Recommended | Enables real outbound verification calls (falls back to in-browser simulator if absent) |
 | `TWILIO_AUTH_TOKEN` | Recommended | " |
 | `TWILIO_PHONE_NUMBER` | Recommended | " |
-| `BASE_URL` | Required for real Twilio calls | Public URL (e.g. an ngrok tunnel) Twilio can reach for webhook callbacks — `localhost` will not work |
+| `BASE_URL` | Required for real Twilio calls | Public URL (e.g. an ngrok tunnel) Twilio can reach for webhook callbacks :  `localhost` will not work |
 
 For a live demo without any external credentials configured, the in-browser call simulator on the Flag Queue page exercises the same Intent Parser and audit logic without needing a real Twilio call.
 
@@ -175,19 +175,19 @@ For a live demo without any external credentials configured, the in-browser call
 
 ## What's Next / Known Limitations
 
-- **Single-turn voice verification only.** The Twilio flow uses one `<Gather>` question and one spoken answer — not a full conversational, multi-turn voice agent (Twilio Media Streams). This was a deliberate scope decision for reliability within a hackathon build window.
+- **Single-turn voice verification only.** The Twilio flow uses one `<Gather>` question and one spoken answer, not a full conversational, multi-turn voice agent (Twilio Media Streams). This was a deliberate scope decision for reliability within a hackathon build window.
 - **Single-event scope.** The current build handles one event at a time; multi-event/multi-organization support is a natural next step.
-- **Trial-tier Twilio restrictions.** Outbound calls currently require verifying each destination number under Twilio's trial Verified Caller IDs — a paid Twilio account removes this restriction.
-- **Fuzzy matching, not identity verification.** Duplicate detection is deliberately lightweight (name/email/phone/roll-number similarity) — it is not a KYC-grade identity check, by design.
-- **Reconciliation match-rate metric is planned but not yet surfaced in the UI** — it's computable from existing data but not currently rendered on the dashboard.
+- **Trial-tier Twilio restrictions.** Outbound calls currently require verifying each destination number under Twilio's trial Verified Caller IDs; a paid Twilio account removes this restriction.
+- **Fuzzy matching, not identity verification.** Duplicate detection is deliberately lightweight (name/email/phone/roll-number similarity); it is not a KYC-grade identity check, by design.
+- **Reconciliation match-rate metric is planned but not yet surfaced in the UI** : it's computable from existing data but not currently rendered on the dashboard.
 
 ---
 
 ## Demo Script
 
 1. Register live with a real Razorpay test card, showing a genuine Order ID.
-2. Register a near-duplicate (same phone, slightly different name/email) — watch it get flagged with an AI explanation and matched fields.
-3. Trigger "Call to Verify" — a real phone rings, asks the question, captures the spoken answer.
+2. Register a near-duplicate (same phone, slightly different name/email) then watch it get flagged with an AI explanation and matched fields.
+3. Trigger "Call to Verify" : a real phone rings, asks the question, captures the spoken answer.
 4. Show the flag auto-resolve and the refund fire through Razorpay's real Refunds API.
-5. Open the Audit Log and point at the actor field on each entry — proof of what actually ran.
+5. Open the Audit Log and point at the actor field on each entry : proof of what actually ran.
 6. Pull up Razorpay's own test-mode dashboard side by side to confirm the refund is real, not just an internal status flip.

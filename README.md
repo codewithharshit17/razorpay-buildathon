@@ -2,6 +2,11 @@
 
 **An AI-powered trust and audit layer for student event payments.**
 
+It’s an automated event ledger and payout engine built ground-up on 
+Razorpay. It uses multi-agent AI powered by Gemini, native Razorpay 
+Checkout, and automated Twilio voice-verification calls to approve high-value 
+payouts with zero manual friction.
+
 ![Event KhataBook](docs/banner.svg)
 
 
